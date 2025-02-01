@@ -9,11 +9,12 @@ let toDoData = [];
 const setLocalStorage = function (data) {
   window.localStorage.setItem('todos', JSON.stringify(data));
 };
+const getData = (key) => JSON.parse(localStorage.getItem(key)) || [];
 
 const render = function () {
   todoList.innerHTML = '';
   todoCompleted.innerHTML = '';
-  toDoData.forEach((el) => {
+  toDoData.forEach((el, index) => {
     const li = document.createElement('li');
     li.classList.add('todo-item');
     li.innerHTML = `<span class="text-todo">${el.text}</span>
@@ -35,8 +36,9 @@ const render = function () {
 
     li.querySelector('.todo-remove').addEventListener('click', function () {
       li.remove();
-      toDoData.pop(el);
+      toDoData.splice(index, 1);
       setLocalStorage(toDoData);
+      render();
     });
   });
 };
@@ -57,8 +59,5 @@ todoControl.addEventListener('submit', function (e) {
   }
 });
 
-const storedTodos = window.localStorage.getItem('todos');
-if (storedTodos) {
-  toDoData = JSON.parse(storedTodos);
-  render();
-}
+toDoData = getData('todos');
+toDoData.length !== 0 ? render() : null;
